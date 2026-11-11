@@ -33,6 +33,15 @@ New features:
 - If any part declares ``build-slices``, Craft Parts will validate that the
   resulting build environment contains ``/bin/bash``.
 
+- The Python plugin (v2) now rewrites the shebangs of pip-installed console
+  scripts to a runtime-valid interpreter path, instead of leaving the
+  build-time path that pip embeds. Applications can override the target
+  interpreter by subclassing the plugin.
+
+- Warn when a part's ``source`` is an absolute path or a relative path that
+  leads out of the project directory, as these may not exist in a managed
+  build environment.
+
 Bug fixes:
 
 - Already-installed snaps required to build a part are now refreshed when the
@@ -56,11 +65,26 @@ Bug fixes:
 - When using the ``rust-deps`` part to provision the Rust toolchain,
   setting ``rust-channel: "none"`` is no longer required.
 
+- A path-like source that does not exist now raises ``SourceNotFound``
+  instead of ``InvalidSourceType`` error.
+
 - Fix a quadratic slowdown when the ``stage`` or ``prime`` keys exclude many
   directories, such as ``-**/__pycache__`` in a large Python environment.
 
 For a complete list of commits, check out the `2.38.0`_ release on GitHub.
 
+.. _release-2.37.3:
+
+2.37.3 (2026-11-10)
+-------------------
+
+Bug fixes:
+
+- Pass the host's release to Chisel with ``--release`` when cutting slices, as
+  Chisel can no longer infer it on Ubuntu 26.10 and newer, which don't ship
+  ``/etc/lsb-release``.
+
+For a complete list of commits, check out the `2.37.3`_ release on GitHub.
 
 .. _release-2.37.2:
 
@@ -1968,6 +1992,7 @@ For a complete list of commits, check out the `2.0.0`_ release on GitHub.
 .. _Poetry: https://python-poetry.org
 
 .. _2.38.0: https://github.com/canonical/craft-parts/releases/tag/2.38.0
+.. _2.37.3: https://github.com/canonical/craft-parts/releases/tag/2.37.3
 .. _2.37.2: https://github.com/canonical/craft-parts/releases/tag/2.37.2
 .. _2.37.1: https://github.com/canonical/craft-parts/releases/tag/2.37.1
 .. _2.37.0: https://github.com/canonical/craft-parts/releases/tag/2.37.0
